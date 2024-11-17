@@ -27,6 +27,7 @@ function Arc({
             });
         }, 100);
     };
+    const points = useMemo(() => {
         const positions = [];
         for (let i = 0; i <= segments; i++) {
             const t = i / segments;
@@ -36,6 +37,7 @@ function Arc({
             positions.push([x, y, 0]);
         }
         return positions;
+    }, [arc_length, radius, segments, currentAngle]);
     }, [arc_length, radius, segments]);
 
     return <Line points={points} color="blue" lineWidth={2} opacity={opacity} />;

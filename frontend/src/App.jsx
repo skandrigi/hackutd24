@@ -40,22 +40,6 @@ function MovingParticles({ angle = Math.PI * 2 }) {
       <pointsMaterial size={0.05} color="blue" />
     </points>
   );
-    if (pointsRef.current) {
-      pointsRef.current.rotation.x += 0.01;
-      pointsRef.current.rotation.y += 0.01;
-
-      // Randomly move particles in 2D space
-      pointsRef.current.position.x += (Math.random() - 0.5) * 0.01;
-      pointsRef.current.position.y += (Math.random() - 0.5) * 0.01;
-    }
-  });
-
-  return (
-    <points ref={pointsRef}>
-      <torusGeometry args={[2, 0.8, 16, 100, angle]} />
-      <pointsMaterial size={0.05} color="blue" />
-    </points>
-  );
 }
 
 export default function App() {

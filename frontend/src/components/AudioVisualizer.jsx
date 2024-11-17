@@ -105,6 +105,8 @@ export default function AudioVisualizer({currentAngle, setCurrentAngle}) {
         <SmallCircle radius={1.5} currentAngle={currentAngle} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
+         
+
       </Canvas>
     </div>
   );

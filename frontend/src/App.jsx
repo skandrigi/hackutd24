@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import AudioVisualizer from "./components/AudioVisualizer";
 import logo from "./assets/logo.png";
 import mainasset from "./assets/mainasset.gif";
+import transcriptionIcon from "./assets/icon.png"
 
 const App = () => {
   const [mode, setMode] = useState("nearby");
@@ -109,7 +110,11 @@ const App = () => {
       {/* Transcription Box */}
       {transcriptionOn && (
         <div className="w-full max-w-3xl p-4 bg-white border rounded-lg shadow mt-6">
-          <p className="text-sm text-gray-500">Transcription:</p>
+          <div className="flex items-center">
+            {/* Small image next to the text */}
+            <img src={transcriptionIcon} alt="Transcription Icon" className="w-12 h-12 mr-3" />
+            <p className="text-base text-gray-500">Transcription:</p>
+          </div>
           <div className="mt-2 p-2 h-40 overflow-y-auto border rounded bg-gray-100">
             {transcriptionText || "No transcription yet..."}
           </div>

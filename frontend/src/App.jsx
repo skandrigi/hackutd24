@@ -38,7 +38,6 @@ function Arc({
         }
         return positions;
     }, [arc_length, radius, segments, currentAngle]);
-    }, [arc_length, radius, segments]);
 
     return <Line points={points} color="blue" lineWidth={2} opacity={opacity} />;
 }

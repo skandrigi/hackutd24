@@ -5,8 +5,8 @@ import * as THREE from "three";
 function MovingParticles({ angle = .4 }) {
   const pointsRef = useRef();
 
-  const numParticles = 500; // Increase number of particles for a thicker arc
-  const radius = 2; // Radius of the arc
+  const numParticles = 300; 
+  const radius = 1.5; // Radius of the arc
 
   const positions = [];
   for (let i = 0; i < numParticles; i++) {
@@ -45,7 +45,7 @@ function MovingParticles({ angle = .4 }) {
 export default function App() {
   return (
     <Canvas camera={{ fov: 45 }} style={{ width: '100vw', height: '100vh' }}>
-      <MovingParticles angle={Math.PI / 12} /> // 15 degrees
+      <MovingParticles angle={Math.PI / 6} /> 
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
     </Canvas>

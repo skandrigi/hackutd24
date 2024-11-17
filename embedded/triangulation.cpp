@@ -2,9 +2,9 @@
 
 // Mic pins and trigger values
 #define TRIGGERVALUE 2000
-#define AB in meters
-#define AC
-#define BC
+#define AB 0.06
+#define AC 0.06
+#define BC 0.02
 #define MAXTIME 20000
 #define DELAYTIME 20000
 

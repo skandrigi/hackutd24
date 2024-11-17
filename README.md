@@ -1,5 +1,11 @@
 # Tritone 🎧
 
+## FYI for HackUTD organizers:
+
+We have 5 contributors on the graph, but they were because a teammate borrowed a laptop to do work on. Please feel free to look at the commit history to confirm, there were only 3 commits before we realized our mistake. 
+
+---
+
 Tritone is an innovative IoT system designed to enhance auditory accessibility for individuals with hearing impairments. This application leverages embedded hardware and web technologies to process and visualize audio, enabling users to focus on nearby or distant sounds with ease. Its intuitive interface provides real-time transcription and visual indicators of sound directionality and intensity.
 
 Tritone bridges the gap between sound amplification and intelligent sound processing, offering a reliable and accessible solution for improving auditory experiences.

@@ -20,6 +20,7 @@ message_queue = Queue()
 # Function to calculate loudness
 def audio_callback(indata, frames, time, status):
     audio_data.append(indata.copy())
+    print(f"Audio callback received {frames} frames")
 
     volume_norm = np.linalg.norm(indata) * 10
     message = f"{CLIENT_ID}:{volume_norm}"
@@ -43,6 +44,7 @@ async def transcribe_audio():
         await asyncio.sleep(5)
         if audio_data:
             audio_chunk = np.concatenate(audio_data, axis=0)
+            print(f"Audio chunk size before clearing: {len(audio_chunk)}")
             audio_data.clear()
             
             print(f"Transcribing audio chunk of size {len(audio_chunk)}")
@@ -55,6 +57,7 @@ async def transcribe_audio():
                 wf.writeframes(audio_chunk.tobytes())
 
             with open(temp_audio_file, "rb") as audio_file:
+                print("Sending audio chunk for transcription")
                 transcription = client.audio.transcriptions.create(
                     model="whisper-turbo",
                     file=audio_file,

@@ -62,7 +62,13 @@ async def get(request: Request):
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
-        await asyncio.Future()  # Keep the connection open
+        while True:
+            data = await websocket.receive_text()
+            try:
+                angle = float(data)
+                await manager.broadcast("angle", angle)
+            except ValueError:
+                print(f"Received invalid float: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")

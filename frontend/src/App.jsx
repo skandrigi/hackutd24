@@ -5,15 +5,18 @@ import * as THREE from "three";
 function MovingParticles({ angle = Math.PI * 2 }) {
   const pointsRef = useRef();
 
-  const numParticles = 100; // Number of particles
+  const numParticles = 500; // Increase number of particles for a thicker arc
   const radius = 2; // Radius of the arc
 
   // Calculate positions of particles along the arc
   const positions = [];
   for (let i = 0; i < numParticles; i++) {
-    const theta = (i / numParticles) * angle; // Angle for each particle
-    const x = radius * Math.cos(theta);
-    const y = radius * Math.sin(theta);
+    // Use a normal distribution to pool more points towards the middle
+    const t = (Math.random() + Math.random() + Math.random()) / 3; // Central limit theorem
+    const theta = (t * angle) - (angle / 2); // Center the arc around 0
+    const r = radius + (Math.random() - 0.5) * 0.5; // Add randomness to radius
+    const x = r * Math.cos(theta);
+    const y = r * Math.sin(theta);
     positions.push(x, y, 0); // z = 0 for 2D
   }
 

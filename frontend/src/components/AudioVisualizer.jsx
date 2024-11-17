@@ -77,17 +77,16 @@ function Circle({ radius = 1.5, segments = 100 }) {
   );
 }
 
-export default function AudioVisualizer() {
-  const [currentAngle, setCurrentAngle] = useState(0);
+export default function AudioVisualizer({currentAngle, setCurrentAngle}) {
 
   useEffect(() => {
     // Simulate real-time updates from WebSocket or backend
-    const interval = setInterval(() => {
-      const randomAngle = Math.floor(Math.random() * 360);
-      setCurrentAngle(randomAngle);
-    }, 2000); // Update every 2 seconds
+    // const interval = setInterval(() => {
+    //   const randomAngle = Math.floor(Math.random() * 360);
+    //   setCurrentAngle(randomAngle);
+    // }, 2000); // Update every 2 seconds
 
-    return () => clearInterval(interval);
+    // return () => clearInterval(interval);
   }, []);
 
   return (

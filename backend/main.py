@@ -71,7 +71,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 print(f"Received invalid float: {data}")
     except WebSocketDisconnect:
         manager.disconnect(websocket)
-        await manager.broadcast("A client disconnected")
+        await manager.broadcast("System", "A client disconnected")
 
 @app.on_event("startup")
 async def startup_event():

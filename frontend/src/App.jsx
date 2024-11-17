@@ -1,6 +1,7 @@
 import { Canvas } from "@react-three/fiber";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Line } from "@react-three/drei";
+import { useState } from "react";
 
 const degToRad = (degrees) => (degrees * Math.PI) / 180;
 
@@ -9,10 +10,9 @@ function Arc({
     radius = 1.5,
     segments = 100,
     angle = 0,
+    currentAngle,
+    opacity,
 }) {
-    const [currentAngle, setCurrentAngle] = useState(0);
-    const [opacity, setOpacity] = useState(1);
-
     const points = useMemo(() => {
         const positions = [];
         for (let i = 0; i <= segments; i++) {
@@ -32,6 +32,9 @@ function Arc({
 }
 
 export default function App() {
+    const [currentAngle, setCurrentAngle] = useState(0);
+    const [opacity, setOpacity] = useState(1);
+
     const handleRandomAngle = () => {
         const randomAngle = Math.floor(Math.random() * 360);
         setCurrentAngle(randomAngle);
@@ -46,6 +49,7 @@ export default function App() {
             });
         }, 100);
     };
+
     return (
         <>
             <button
@@ -63,7 +67,8 @@ export default function App() {
                     radius={1.5}
                     segments={100}
                     angle={180}
-                    handleRandomAngle={handleRandomAngle}
+                    currentAngle={currentAngle}
+                    opacity={opacity}
                 />
                 <ambientLight intensity={0.5} />
                 <pointLight position={[10, 10, 10]} />

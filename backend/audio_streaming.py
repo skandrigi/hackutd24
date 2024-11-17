@@ -11,7 +11,7 @@ import io
 
 
 # Initialize Whisper model
-model = openai.Whisper()
+client = openai.OpenAI()
 
 # Queue to hold loudness values
 audio_data = []

@@ -93,15 +93,18 @@ void triangulationLoop() {
     micC_trigger = true;
   }
 
-  if (micA_trigger && micB_trigger && micC_trigger) {
+if (micA_trigger && micB_trigger && micC_trigger) {
     ori = calculate(micA_timestamp - micB_timestamp, micB_timestamp - micC_timestamp, 0);
     
-    Serial.println("Angle: " + String(ori.angle));
-    
+    Serial.println("Angle: " + String(ori.angle) + ", Distance: " + String(ori.distance));
+
+    sendTriangulationData(ori.angle, ori.distance);
+
     micA_trigger = false;
     micB_trigger = false;
     micC_trigger = false;
-  }
+}
+
 
   delay(15);  // Delay between calculations
 }

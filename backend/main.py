@@ -32,50 +32,26 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # Wait for incoming message from ESP32
-            data = await websocket.receive_text()
-            try:
-                # Parse the incoming JSON data
-                received_data = json.loads(data)
+            data = await websocket.receive()
 
-                # Check the type of data (triangulation or audio transcription)
-                if "angle" in received_data and "distance" in received_data:
-                    # Handle triangulation data
-                    angle = received_data["angle"]
-                    distance = received_data["distance"]
-                    print(f"Received triangulation data: Angle={angle}, Distance={distance}")
+            if data["type"] == "text": # angle and distance
+                message = data["text"]
+                try:
+                    json_data = json.loads(message)
+                    if json_data.get("type") == "triangulation":
+                        angle = json_data["angle"]
+                        distance = json_data["distance"]
+                        print(f"Received triangulation data: Angle={angle}, Distance={distance}")
+                    elif json_data.get("type") == "transcription":
+                        transcription = json_data["text"]
+                        print(f"Received transcription: {transcription}")
+                except json.JSONDecodeError:
+                    print("Invalid JSON message received.")
+                
+            elif data["type"] == "binary": # audio
+                audio_data = data["bytes"]
+                print(f"Received binary audio data of size {len(audio_data)}")
 
-                    # Prepare the response JSON
-                    location_data = {
-                        "type": "location",
-                        "angle": angle,
-                        "distance": distance
-                    }
-                    location_json = json.dumps(location_data)
-
-                    # Broadcast triangulation data to all clients
-                    await manager.broadcast(location_json)
-
-                elif "transcription" in received_data:
-                    # Handle audio transcription data
-                    transcription = received_data["transcription"]
-                    print(f"Received transcription: {transcription}")
-
-                    # Prepare the response JSON
-                    transcription_data = {
-                        "type": "transcription",
-                        "text": transcription
-                    }
-                    transcription_json = json.dumps(transcription_data)
-
-                    # Broadcast transcription data to all clients
-                    await manager.broadcast(transcription_json)
-
-            except json.JSONDecodeError:
-                print("Received invalid JSON data")
-
-            # Add a small delay for loop control
-            await asyncio.sleep(0.1)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")

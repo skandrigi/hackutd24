@@ -24,9 +24,12 @@ const App = () => {
 
     const graphics = new PIXI.Graphics();
 
+    const centerX = app.screen.width / 2;
+    const centerY = app.screen.height / 2;
+
     // Draw white circle outline with thicker stroke
     graphics.lineStyle(8, 0xFFFFFF); // White border with thickness of 8
-    graphics.arc(400, 300, 150, 0, Math.PI * 2); // Full circle outline with radius of 150
+    graphics.arc(centerX, centerY, 150, 0, Math.PI * 2); // Full circle outline with radius of 150
     app.stage.addChild(graphics);
 
     // Calculate start and end angles for highlighting (centered around `highlightedDegree`)
@@ -37,15 +40,15 @@ const App = () => {
     // Draw green highlighted arc based on degree
     const highlightGraphics = new PIXI.Graphics();
     highlightGraphics.lineStyle(8, 0x00FF00); // Green border for highlighting with thickness of 8
-    highlightGraphics.arc(400, 300, 150, startAngle, endAngle); // Highlighted arc (centered around degree)
+    highlightGraphics.arc(centerX, centerY, 150, startAngle, endAngle); // Highlighted arc (centered around degree)
     app.stage.addChild(highlightGraphics);
   };
 
   useEffect(() => {
-    // Initialize PixiJS Application once on mount with higher resolution and larger stage
+    // Initialize PixiJS Application once on mount with dynamic screen size
     const app = new PIXI.Application({ 
-      width: 1000, 
-      height: 800,
+      width: window.innerWidth,
+      height: window.innerHeight,
       resolution: window.devicePixelRatio || 2, // Higher resolution for smoother rendering
       antialias: true,                          // Enable antialiasing for smoother edges
       backgroundColor: 0x000000                 // Optional background color (black)
@@ -57,7 +60,16 @@ const App = () => {
       drawCircle(degree); // Initial draw with default degree
     }
 
+    // Handle window resize to adjust canvas size dynamically
+    const handleResize = () => {
+      app.renderer.resize(window.innerWidth, window.innerHeight);
+      drawCircle(degree); // Re-draw circle after resizing
+    };
+
+    window.addEventListener('resize', handleResize);
+
     return () => {
+      window.removeEventListener('resize', handleResize);
       app.destroy(true, { children: true }); // Clean up when component unmounts
     };
   }, []);

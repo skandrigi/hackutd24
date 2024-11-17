@@ -1,8 +1,23 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+from fastapi.templating import Jinja2Templates
 import json
-import asyncio
 
 app = FastAPI()
+
+# Allow all origins (for testing purposes)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Replace with specific origins in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Set up the templates directory
+templates = Jinja2Templates(directory="templates")
+
 
 class ConnectionManager:
     def __init__(self):
@@ -25,7 +40,14 @@ class ConnectionManager:
         for connection in self.active_connections:
             await connection.send_text(message)
 
+
 manager = ConnectionManager()
+
+
+@app.get("/", response_class=HTMLResponse)
+async def get(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
@@ -41,15 +63,20 @@ async def websocket_endpoint(websocket: WebSocket):
                     if json_data.get("type") == "triangulation":
                         angle = json_data["angle"]
                         distance = json_data["distance"]
-                        print(f"Received triangulation data: Angle={angle}, Distance={distance}")
+                        print(
+                            f"Received triangulation data: Angle={angle}, Distance={distance}"
+                        )
                 except json.JSONDecodeError:
                     print("Invalid JSON message received.")
-                
+
             elif data["type"] == "binary":  # audio data (raw binary)
                 audio_data = data["bytes"]
                 print(f"Received binary audio data of size {len(audio_data)}")
-                await websocket.send_bytes(audio_data)  # Send the received binary data back to the client
+                await websocket.send_bytes(
+                    audio_data
+                )  # Send the received binary data back to the client
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")
+

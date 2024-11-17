@@ -13,20 +13,6 @@ function Arc({
     const [currentAngle, setCurrentAngle] = useState(0);
     const [opacity, setOpacity] = useState(0);
 
-    const handleRandomAngle = () => {
-        const randomAngle = Math.floor(Math.random() * 360);
-        setCurrentAngle(randomAngle);
-        setOpacity(0);
-        const fadeIn = setInterval(() => {
-            setOpacity((prev) => {
-                if (prev >= 1) {
-                    clearInterval(fadeIn);
-                    return 1;
-                }
-                return prev + 0.1;
-            });
-        }, 100);
-    };
     const points = useMemo(() => {
         const positions = [];
         for (let i = 0; i <= segments; i++) {
@@ -43,7 +29,20 @@ function Arc({
 }
 
 export default function App() {
-    return (
+    const handleRandomAngle = () => {
+        const randomAngle = Math.floor(Math.random() * 360);
+        setCurrentAngle(randomAngle);
+        setOpacity(0);
+        const fadeIn = setInterval(() => {
+            setOpacity((prev) => {
+                if (prev >= 1) {
+                    clearInterval(fadeIn);
+                    return 1;
+                }
+                return prev + 0.1;
+            });
+        }, 100);
+    };
         <>
         <button onClick={handleRandomAngle} style={{ position: 'absolute', zIndex: 1 }}>
             Random Angle
@@ -57,6 +56,7 @@ export default function App() {
                 radius={1.5}
                 segments={100}
                 angle={180}
+                handleRandomAngle={handleRandomAngle}
             />
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />

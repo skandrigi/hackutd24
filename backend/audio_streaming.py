@@ -44,15 +44,12 @@ async def transcribe_audio():
     while True:
         await asyncio.sleep(5)
         if audio_data:
-            # Concatenate audio data
             audio_chunk = np.concatenate(audio_data, axis=0)
             audio_data.clear()
 
-            # Save audio chunk to a temporary file
             temp_audio_file = "/tmp/audio_chunk.npy"
             np.save(temp_audio_file, audio_chunk)
 
-            # Open the file and transcribe using Whisper
             with open(temp_audio_file, "rb") as audio_file:
                 transcription = client.audio.transcriptions.create(
                     model="whisper-1",

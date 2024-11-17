@@ -2,16 +2,14 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 import * as THREE from "three";
 
-function MovingParticles({ angle = Math.PI * 2 }) {
+function MovingParticles({ angle = .4 }) {
   const pointsRef = useRef();
 
   const numParticles = 500; // Increase number of particles for a thicker arc
-  const radius = 2; // Radius of the arc
+  const radius = 5; // Radius of the arc
 
-  // Calculate positions of particles along the arc
   const positions = [];
   for (let i = 0; i < numParticles; i++) {
-    // Use a normal distribution to pool more points towards the middle
     const t = (Math.random() + Math.random() + Math.random()) / 3; // Central limit theorem
     const theta = (t * angle) - (angle / 2); // Center the arc around 0
     const r = radius + (Math.random() - 0.5) * 0.5; // Add randomness to radius
@@ -22,9 +20,8 @@ function MovingParticles({ angle = Math.PI * 2 }) {
 
   useFrame(() => {
     if (pointsRef.current) {
-      pointsRef.current.rotation.z += 0.01; // Rotate around z-axis
+      pointsRef.current.rotation.z += 0.01; 
 
-      // Randomly move particles in 2D space
       pointsRef.current.position.x += (Math.random() - 0.5) * 0.01;
       pointsRef.current.position.y += (Math.random() - 0.5) * 0.01;
     }

@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 
-function MovingParticles() {
+function MovingParticles({ angle = Math.PI * 2 }) {
   const pointsRef = useRef();
 
   useFrame(() => {
@@ -17,7 +17,7 @@ function MovingParticles() {
 
   return (
     <points ref={pointsRef}>
-      <torusGeometry args={[2, 0.8, 16, 100]} />
+      <torusGeometry args={[2, 0.8, 16, 100, angle]} />
       <pointsMaterial size={0.05} color="blue" />
     </points>
   );
@@ -26,7 +26,7 @@ function MovingParticles() {
 export default function App() {
   return (
     <Canvas camera={{ fov: 45 }}>
-      <MovingParticles />
+      <MovingParticles angle={Math.PI} />
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
     </Canvas>

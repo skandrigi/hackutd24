@@ -2,9 +2,9 @@
 #include <WebSocketsClient.h>
 #include <I2S.h>
 
-const char* ssid = "your_SSID";
-const char* password = "your_PASSWORD";
-const char* serverUrl = "ws://your_backend_ip:port";  // WebSocket server address
+const char* ssid = "";
+const char* password = "";
+const char* serverUrl = "";  
 
 WebSocketsClient webSocket;
 

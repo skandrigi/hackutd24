@@ -35,7 +35,7 @@ function MovingParticles({ angle = Math.PI * 2 }) {
       <bufferGeometry attach="geometry">
         <bufferAttribute
           attach="attributes-position"
-          count={positions.length / 3}
+          count={numParticles}
           array={new Float32Array(positions)}
           itemSize={3}
         />

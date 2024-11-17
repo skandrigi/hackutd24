@@ -1,5 +1,5 @@
 import { Canvas } from "@react-three/fiber";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Line } from "@react-three/drei";
 
 const degToRad = (degrees) => (degrees * Math.PI) / 180;
@@ -10,7 +10,23 @@ function Arc({
     segments = 100,
     angle = 0,
 }) {
-    const points = useMemo(() => {
+    const [angle, setAngle] = useState(0);
+    const [opacity, setOpacity] = useState(0);
+
+    const handleRandomAngle = () => {
+        const randomAngle = Math.floor(Math.random() * 360);
+        setAngle(randomAngle);
+        setOpacity(0);
+        const fadeIn = setInterval(() => {
+            setOpacity((prev) => {
+                if (prev >= 1) {
+                    clearInterval(fadeIn);
+                    return 1;
+                }
+                return prev + 0.1;
+            });
+        }, 100);
+    };
         const positions = [];
         for (let i = 0; i <= segments; i++) {
             const t = i / segments;
@@ -22,11 +38,14 @@ function Arc({
         return positions;
     }, [arc_length, radius, segments]);
 
-    return <Line points={points} color="blue" lineWidth={2} />;
+    return <Line points={points} color="blue" lineWidth={2} opacity={opacity} />;
 }
 
 export default function App() {
     return (
+        <button onClick={handleRandomAngle} style={{ position: 'absolute', zIndex: 1 }}>
+            Random Angle
+        </button>
         <Canvas
             camera={{ fov: 45 }}
             style={{ width: "100vw", height: "100vh" }}

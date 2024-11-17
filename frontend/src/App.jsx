@@ -7,7 +7,7 @@ function Arc({ arc_length = Math.PI / 6, radius = 1.5, segments = 100, angle=0 }
     const positions = [];
     for (let i = 0; i <= segments; i++) {
       const t = i / segments;
-      const theta = t * arc_length - arc_length / 2;
+      const theta = t * arc_length - arc_length / 2 + angle;
       const x = radius * Math.cos(theta);
       const y = radius * Math.sin(theta);
       positions.push([x, y, 0]);

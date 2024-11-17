@@ -1,10 +1,12 @@
+import sounddevice as sd
+import numpy as np
+from faster_whisper import WhisperModel
+import asyncio
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
-import json
-import random
-import asyncio
+import threading
 
 app = FastAPI()
 
@@ -20,6 +22,11 @@ app.add_middleware(
 # Set up the templates directory
 templates = Jinja2Templates(directory="templates")
 
+CHUNK_SIZE = 16000 * 5
+RATE = 16000
+CHANNELS = 1
+
+model_size = "tiny.en"
 
 class ConnectionManager:
     def __init__(self):
@@ -40,50 +47,69 @@ class ConnectionManager:
 
     async def broadcast(self, message: str):
         for connection in self.active_connections:
-            await connection.send_text(message)
-
+            try:
+                await connection.send_text(message)
+            except WebSocketDisconnect:
+                self.disconnect(connection)
 
 manager = ConnectionManager()
-
 
 @app.get("/", response_class=HTMLResponse)
 async def get(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
-        while True:
-            while True:
-                data = await websocket.receive()
-
-                if isinstance(data, str):  # angle and distance
-                    try:
-                        json_data = json.loads(data)
-                        if json_data.get("type") == "triangulation":
-                            angle = json_data["angle"]
-                            distance = json_data["distance"]
-                            print(
-                                f"Received triangulation data: Angle={angle}, Distance={distance}"
-                            )
-                    except json.JSONDecodeError:
-                        print("Invalid JSON message received.")
-
-                elif isinstance(data, bytes):  # audio data (raw binary)
-                    audio_data = data
-                    print(f"Received binary audio data of size {len(audio_data)}")
-                    await websocket.send_bytes(
-                        audio_data
-                    )  # Send the received binary data back to the client
-
-                # Send random location data
-                angle = random.randint(0, 360)  # Generate a random angle for the chunk
-                await websocket.send_json({"angle": angle})
-                timeout = random.randint(1, 5)  # Generate a random timeout for the chunk
-                await asyncio.sleep(timeout)
-
+        await asyncio.Future()  # Keep the connection open
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")
+
+@app.on_event("startup")
+async def startup_event():
+    loop = asyncio.get_running_loop()
+    threading.Thread(target=send_audio, args=(loop,), daemon=True).start()
+
+def send_audio(loop):
+    model = WhisperModel(model_size, device="cpu", compute_type="int8")
+
+    def audio_callback(indata, frames, time, status):
+        if status:
+            print(f"Sounddevice status: {status}")
+
+        # Normalize the audio input and process it
+        numpy_data = indata[:, 0].astype(np.float32)  # Use the first channel (mono)
+        if np.max(np.abs(numpy_data)) == 0:
+            return  # Avoid division by zero
+        numpy_data = numpy_data / np.max(np.abs(numpy_data))
+
+        # Transcribe the audio
+        segments, info = model.transcribe(numpy_data, beam_size=5, language="en")
+        for segment in segments:
+            transcript = "[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text)
+            print(transcript)
+
+            # Schedule sending the transcript to all connected clients
+            asyncio.run_coroutine_threadsafe(
+                manager.broadcast(transcript), loop
+            )
+
+    try:
+        with sd.InputStream(
+            samplerate=RATE,
+            channels=CHANNELS,
+            dtype="float32",
+            blocksize=CHUNK_SIZE,
+            callback=audio_callback,
+        ):
+            print("Listening...")
+            while True:
+                sd.sleep(1000)  # Keep the stream open
+    except KeyboardInterrupt:
+        print("Stopping...")
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

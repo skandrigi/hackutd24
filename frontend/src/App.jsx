@@ -1,18 +1,22 @@
 import { Canvas } from "@react-three/fiber";
+import { useSpring, animated } from "@react-spring/three";
 import { useMemo, useState } from "react";
 import { Line } from "@react-three/drei";
 
 const degToRad = (degrees) => (degrees * Math.PI) / 180;
 
 function SmallCircle({ radius = 1.5, currentAngle }) {
-  const position = useMemo(() => {
-    const x = radius * Math.cos(degToRad(currentAngle));
-    const y = radius * Math.sin(degToRad(currentAngle));
-    return [x, y, 0.01]; // Slightly in front of the circle
-  }, [radius, currentAngle]);
+  const { position } = useSpring({
+    position: [
+      radius * Math.cos(degToRad(currentAngle)),
+      radius * Math.sin(degToRad(currentAngle)),
+      0.01,
+    ],
+    config: { tension: 170, friction: 26 },
+  });
 
   return (
-    <mesh position={position}>
+    <animated.mesh position={position}>
       <circleGeometry args={[0.1, 32]} />
       <meshBasicMaterial color="blue" />
     </mesh>

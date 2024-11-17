@@ -42,13 +42,13 @@ class ConnectionManager:
             self.active_connections.remove(websocket)
             print(f"Client disconnected: {websocket.client}")
 
-    async def send_personal_message(self, message: str, websocket: WebSocket):
-        await websocket.send_text(message)
+    async def send_personal_message(self, key: str, message: str, websocket: WebSocket):
+        await websocket.send_json({key: message})
 
-    async def broadcast(self, message: str):
+    async def broadcast(self, key: str, message: str):
         for connection in self.active_connections:
             try:
-                await connection.send_text(message)
+                await connection.send_json({key: message})
             except WebSocketDisconnect:
                 self.disconnect(connection)
 
@@ -88,12 +88,12 @@ def send_audio(loop):
         # Transcribe the audio
         segments, info = model.transcribe(numpy_data, beam_size=5, language="en")
         for segment in segments:
-            transcript = "[%.2fs -> %.2fs] %s" % (segment.start, segment.end, segment.text)
+            transcript = "%s" % (segment.text)
             print(transcript)
 
             # Schedule sending the transcript to all connected clients
             asyncio.run_coroutine_threadsafe(
-                manager.broadcast(transcript), loop
+                manager.broadcast("transcript", transcript), loop
             )
 
     try:

@@ -1,10 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AudioVisualizer from "./components/AudioVisualizer";
 
 const App = () => {
   const [mode, setMode] = useState("nearby");
   const [transcriptionOn, setTranscriptionOn] = useState(false);
   const [transcriptionText, setTranscriptionText] = useState("");
+  const [currentAngle, setCurrentAngle] = useState(0);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    ws.onmessage = (event) => {
+      // console.log(event.data)
+      const data = JSON.parse(event.data);
+      console.log("Data: ", data)
+      const angle = data.angle !== undefined ? data.angle : 0;
+      const transcription = data.transcript || "";
+      console.log(transcription)
+      setTranscriptionText((prevTranscription) => prevTranscription + "\n" + transcription);
+      setCurrentAngle(angle);
+      setMessages((prev) => [...prev, event.data]);
+    };
+
+    ws.onclose = (event) => {
+      console.log("WebSocket connection closed:", event.reason);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    setSocket(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const handleModeChange = (e) => {
     setMode(e.target.value);
@@ -54,14 +92,12 @@ const App = () => {
         </button>
       </div>
 
-      {/* Render the Audio Visualizer when transcription starts */}
       {transcriptionOn && (
         <div className="mt-6">
           <AudioVisualizer />
         </div>
       )}
 
-      {/* Transcription Box */}
       {transcriptionOn && (
         <div className="w-full max-w-3xl p-4 bg-white border rounded-lg shadow mt-6">
           <p className="text-sm text-gray-500">Transcription:</p>

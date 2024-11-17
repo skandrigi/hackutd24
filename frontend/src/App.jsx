@@ -24,7 +24,7 @@ const App = () => {
 
     const graphics = new PIXI.Graphics();
     graphics.lineStyle(8, 0xFFFFFF); 
-    graphics.arc(centerX, centerY, 250, 0, Math.PI * 2); // Increased radius to 250
+    graphics.arc(centerX, centerY, 250, 0, Math.PI * 2); // Circle radius
     app.stage.addChild(graphics);
 
     const arcWidth = 45; 
@@ -32,21 +32,21 @@ const App = () => {
     const endAngle = ((highlightedDegree + arcWidth / 2 - 90) * Math.PI) / 180;  
     const highlightGraphics = new PIXI.Graphics();
     highlightGraphics.lineStyle(8, 0x00FF00); 
-    highlightGraphics.arc(centerX, centerY, 250, startAngle, endAngle); // Increased radius to match
+    highlightGraphics.arc(centerX, centerY, 250, startAngle, endAngle);
     app.stage.addChild(highlightGraphics);
   };
 
   useEffect(() => {
-    // Reduced stage size for a smaller canvas
-    const stageWidth = window.innerWidth * 0.5;
-    const stageHeight = window.innerHeight * 0.5;
+    // Increase stage size to cover more screen area (70% of window size)
+    const stageWidth = window.innerWidth*2;
+    const stageHeight = window.innerHeight*2;
 
     const app = new PIXI.Application({ 
       width: stageWidth,
       height: stageHeight,
-      resolution: window.devicePixelRatio || 2, 
-      antialias: true,                          
-      backgroundColor: 0x000000              
+      resolution: window.devicePixelRatio || 2,
+      antialias: true,
+      backgroundColor: 0x000000
     });
     
     if (pixiContainer.current) {
@@ -56,8 +56,8 @@ const App = () => {
     }
 
     const handleResize = () => {
-      const newStageWidth = window.innerWidth * 0.5; // Keep consistent with initial size
-      const newStageHeight = window.innerHeight * 0.5;
+      const newStageWidth = window.innerWidth;
+      const newStageHeight = window.innerHeight;
       app.renderer.resize(newStageWidth, newStageHeight);
       drawCircle(degree); 
     };
@@ -71,16 +71,25 @@ const App = () => {
   }, []);
 
   return (
-    <div>
-      <div ref={pixiContainer}></div> 
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      {/* Container for PIXI stage */}
+      <div ref={pixiContainer}></div>
 
+      {/* Slider positioned absolutely inside the stage */}
       <input 
         type="range" 
         min="0" 
         max="360" 
         value={degree} 
         onChange={(e) => setDegree(Number(e.target.value))} 
-        style={{ width: '400px', marginTop: '20px' }}
+        style={{
+          position: 'absolute',
+          left: '50%',
+          bottom: '100px',
+          transform: 'translateX(-50%)',
+          width: '40%', // Adjust width to fit inside the stage
+          zIndex: '10' // Ensure it's above the canvas
+        }}
       />
     </div>
   );

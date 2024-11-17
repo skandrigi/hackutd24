@@ -59,7 +59,7 @@ const App = () => {
           onClick={toggleTranscription}
           className={`px-6 py-2 rounded-md font-semibold text-white ${
             transcriptionOn
-              ? "bg-[#ff3c8a] hover:[#d9296f]"
+              ? "bg-[#ff3c8a] hover:bg-[#d9296f]"
               : "bg-[#70af70] hover:bg-green-600"
           }`}
         >

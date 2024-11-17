@@ -6,13 +6,22 @@ import websockets
 import sounddevice as sd
 import numpy as np
 from queue import Queue
+import openai
+import io
 
+
+# Initialize Whisper model
+model = openai.Whisper()
 
 # Queue to hold loudness values
+audio_data = []
 message_queue = Queue()
 
 # Function to calculate loudness
 def audio_callback(indata, frames, time, status):
+    # Append audio data for transcription
+    audio_data.append(indata.copy())
+
     # Calculate RMS loudness
     volume_norm = np.linalg.norm(indata) * 10
     message = f"{CLIENT_ID}:{volume_norm}"
@@ -29,7 +38,23 @@ async def send_loudness(websocket):
             print(f"Error sending message: {e}")
             break
 
-# Main WebSocket client function
+# Function to transcribe audio every 5 seconds
+async def transcribe_audio():
+    while True:
+        await asyncio.sleep(5)
+        if audio_data:
+            # Concatenate audio data
+            audio_chunk = np.concatenate(audio_data, axis=0)
+            audio_data.clear()
+
+            # Convert to bytes for Whisper
+            audio_bytes = io.BytesIO()
+            np.save(audio_bytes, audio_chunk)
+            audio_bytes.seek(0)
+
+            # Transcribe using Whisper
+            transcription = model.transcribe(audio_bytes)
+            print(f"Transcription: {transcription['text']}")
 async def websocket_client():
     try:
         async with websockets.connect(SERVER_URI) as websocket:
@@ -39,8 +64,10 @@ async def websocket_client():
             with sd.InputStream(callback=audio_callback, channels=1, samplerate=44100):
                 print("Sending loudness data...")
 
-                # Task to handle message sending
+                # Task to handle message sending and transcription
                 sender_task = asyncio.create_task(send_loudness(websocket))
+
+                transcriber_task = asyncio.create_task(transcribe_audio())
 
                 try:
                     while True:
@@ -57,6 +84,7 @@ async def websocket_client():
                 except websockets.exceptions.ConnectionClosed:
                     print("WebSocket connection closed by the server")
                 finally:
+                    transcriber_task.cancel()
                     sender_task.cancel()
 
     except websockets.exceptions.InvalidStatusCode as e:

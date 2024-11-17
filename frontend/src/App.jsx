@@ -6,7 +6,7 @@ import { useState } from "react";
 const degToRad = (degrees) => (degrees * Math.PI) / 180;
 
 function Arc({
-    arc_length = Math.PI / 6,
+    arc_length = 2 * Math.PI,
     radius = 1.5,
     segments = 100,
     angle = 0,

@@ -31,9 +31,11 @@ async def send_loudness(websocket):
         try:
             message = message_queue.get()
             await websocket.send(message)
-        except Exception as e:
-            print(f"Error sending message: {e}")
+        except websockets.exceptions.ConnectionClosedError as e:
+            print(f"Connection closed error: {e}")
             break
+        except Exception as e:
+            print(f"Unexpected error sending message: {e}")
 
 # Function to transcribe audio every 5 seconds
 async def transcribe_audio():
@@ -85,8 +87,10 @@ async def websocket_client():
                         elif isinstance(data, bytes):
                             print(f"Received audio data of size {len(data)}")
                             # Process the audio data as needed
-                except websockets.exceptions.ConnectionClosed:
-                    print("WebSocket connection closed by the server")
+                except websockets.exceptions.ConnectionClosed as e:
+                    print(f"WebSocket connection closed by the server: {e}")
+                except websockets.exceptions.ConnectionClosedError as e:
+                    print(f"Connection closed error: {e}")
                 finally:
                     transcriber_task.cancel()
                     sender_task.cancel()

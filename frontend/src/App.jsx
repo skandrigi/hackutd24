@@ -1,5 +1,7 @@
 import { useState } from "react";
 import AudioVisualizer from "./components/AudioVisualizer";
+import logo from "./assets/logo.png";
+import mainasset from "./assets/mainasset.gif";
 
 const App = () => {
   const [mode, setMode] = useState("nearby");
@@ -22,12 +24,23 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center justify-center px-4">
-      <h1 className="text-3xl font-bold mb-4">HearR</h1>
+      <img
+      src={logo}
+      alt="Tritone"
+      className="w-72 h-auto mb-4" 
+    />
+    {!transcriptionOn &&
+      <img
+      src={mainasset} 
+      alt="asset"
+      className="w-96 h-auto mb-6" 
+  />
+    }
 
       {/* Mode Selection */}
       <div className="flex flex-col items-center space-y-4">
         <div>
-          <label htmlFor="mode" className="block text-lg font-medium mb-1">
+          <label htmlFor="mode" className="block text-lg font-medium mb-1 text-center">
             Select Mode
           </label>
           <select
@@ -37,7 +50,7 @@ const App = () => {
             className="block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
           >
             <option value="nearby">Nearby</option>
-            <option value="long-distance">Long Distance</option>
+            <option value="long-distance">Long-Distance</option>
           </select>
         </div>
 
@@ -47,7 +60,7 @@ const App = () => {
           className={`px-6 py-2 rounded-md font-semibold text-white ${
             transcriptionOn
               ? "bg-red-500 hover:bg-red-600"
-              : "bg-green-500 hover:bg-green-600"
+              : "bg-[#70af70] hover:bg-green-600"
           }`}
         >
           {transcriptionOn ? "Stop Transcription" : "Start Transcription"}

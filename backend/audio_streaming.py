@@ -14,25 +14,21 @@ import wave
 from openai import OpenAI
 client = OpenAI()
 
-# Queue to hold loudness values
 audio_data = []
 message_queue = Queue()
 
 # Function to calculate loudness
 def audio_callback(indata, frames, time, status):
-    # Append audio data for transcription
     audio_data.append(indata.copy())
 
-    # Calculate RMS loudness
     volume_norm = np.linalg.norm(indata) * 10
     message = f"{CLIENT_ID}:{volume_norm}"
-    message_queue.put(message)  # Add the message to the queue
+    message_queue.put(message)  
 
 # Function to process the queue and send messages
 async def send_loudness(websocket):
     while True:
         try:
-            # Wait for messages to send
             message = message_queue.get()
             await websocket.send(message)
         except Exception as e:
@@ -46,12 +42,14 @@ async def transcribe_audio():
         if audio_data:
             audio_chunk = np.concatenate(audio_data, axis=0)
             audio_data.clear()
+            
+            print(f"Transcribing audio chunk of size {len(audio_chunk)}")
 
             temp_audio_file = "/tmp/audio_chunk.wav"
             with wave.open(temp_audio_file, 'wb') as wf:
-                wf.setnchannels(1)  # Mono audio
-                wf.setsampwidth(2)  # Assuming 16-bit audio
-                wf.setframerate(44100)  # Sample rate
+                wf.setnchannels(1)  
+                wf.setsampwidth(2) 
+                wf.setframerate(44100)  
                 wf.writeframes(audio_chunk.tobytes())
 
             with open(temp_audio_file, "rb") as audio_file:

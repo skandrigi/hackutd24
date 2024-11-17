@@ -29,15 +29,15 @@ function MovingParticles({ angle = Math.PI * 2 }) {
 
   return (
     <points ref={pointsRef}>
-      <bufferGeometry>
+      <bufferGeometry attach="geometry">
         <bufferAttribute
-          attachObject={['attributes', 'position']}
+          attach="attributes-position"
           count={positions.length / 3}
           array={new Float32Array(positions)}
           itemSize={3}
         />
       </bufferGeometry>
-      <pointsMaterial size={0.05} color="blue" />
+      <pointsMaterial attach="material" size={0.05} color="blue" />
     </points>
   );
 }

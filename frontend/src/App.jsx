@@ -1,7 +1,7 @@
 import './App.css';
 import { useEffect, useRef, useState } from 'react';
 import * as PIXI from 'pixi.js';
-import { useSpring, animated } from '@react-spring/web';
+import { useSpring } from '@react-spring/web';
 
 const App = () => {
   const pixiContainer = useRef(null); // Ref for attaching Pixi canvas
@@ -24,25 +24,32 @@ const App = () => {
 
     const graphics = new PIXI.Graphics();
 
-    // Draw white circle outline
-    graphics.lineStyle(4, 0xFFFFFF); // White border with thickness of 4
-    graphics.arc(400, 300, 100, 0, Math.PI * 2); // Full circle outline
+    // Draw white circle outline with thicker stroke
+    graphics.lineStyle(8, 0xFFFFFF); // White border with thickness of 8
+    graphics.arc(400, 300, 150, 0, Math.PI * 2); // Full circle outline with radius of 150
     app.stage.addChild(graphics);
 
-    // Calculate start and end angles for highlighting
-    const startAngle = ((highlightedDegree - 11.25) * Math.PI) / 180; // Start angle (1/16 before)
-    const endAngle = ((highlightedDegree + 11.25) * Math.PI) / 180;   // End angle (1/16 after)
+    // Calculate start and end angles for highlighting (centered around `highlightedDegree`)
+    const arcWidth = 45; // Highlight a larger portion (45 degrees)
+    const startAngle = ((highlightedDegree - arcWidth / 2 - 90) * Math.PI) / 180; // Start angle (arcWidth/2 before)
+    const endAngle = ((highlightedDegree + arcWidth / 2 - 90) * Math.PI) / 180;   // End angle (arcWidth/2 after)
 
     // Draw green highlighted arc based on degree
     const highlightGraphics = new PIXI.Graphics();
-    highlightGraphics.lineStyle(4, 0x00FF00); // Green border for highlighting
-    highlightGraphics.arc(400, 300, 100, startAngle, endAngle); // Highlighted arc (1/16th)
+    highlightGraphics.lineStyle(8, 0x00FF00); // Green border for highlighting with thickness of 8
+    highlightGraphics.arc(400, 300, 150, startAngle, endAngle); // Highlighted arc (centered around degree)
     app.stage.addChild(highlightGraphics);
   };
 
   useEffect(() => {
-    // Initialize PixiJS Application once on mount
-    const app = new PIXI.Application({ width: 800, height: 600 });
+    // Initialize PixiJS Application once on mount with higher resolution and larger stage
+    const app = new PIXI.Application({ 
+      width: 1000, 
+      height: 800,
+      resolution: window.devicePixelRatio || 2, // Higher resolution for smoother rendering
+      antialias: true,                          // Enable antialiasing for smoother edges
+      backgroundColor: 0x000000                 // Optional background color (black)
+    });
     
     if (pixiContainer.current) {
       pixiContainer.current.appendChild(app.view);

@@ -14,7 +14,7 @@ function MovingParticles({ angle = .4 }) {
     const theta = (t * angle) - (angle / 2); // Center the arc around 0
     const r = radius + (Math.random() - 0.5) * 0.5; // Add randomness to radius
     const x = r * Math.cos(theta);
-    const y = r * Math.sin(theta);
+    const y = r * Math.sin(theta) * (1 - Math.pow((2 * t - 1), 2)); // Apply quadratic curve
     positions.push(x, y, 0); // z = 0 for 2D
   }
 

@@ -81,6 +81,10 @@ export default function App() {
         <Circle radius={1.5} segments={100} />
         {/* Render the small circle on the larger circle */}
         <SmallCircle radius={1.5} currentAngle={currentAngle} />
+        <mesh position={[0, 0, 0.02]}>
+          <boxGeometry args={[0.2, 0.2, 0.2]} />
+          <meshBasicMaterial color="red" />
+        </mesh>
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
       </Canvas>

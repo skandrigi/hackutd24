@@ -45,7 +45,7 @@ function MovingParticles({ angle = .4 }) {
 export default function App() {
   return (
     <Canvas camera={{ fov: 45 }} style={{ width: '100vw', height: '100vh' }}>
-      <MovingParticles angle={Math.PI} />
+      <MovingParticles angle={Math.PI / 12} /> // 15 degrees
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
     </Canvas>

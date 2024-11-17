@@ -1,7 +1,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { useRef } from "react";
 
-export default function App() {
+function MovingParticles() {
   const pointsRef = useRef();
 
   useFrame(() => {
@@ -14,13 +14,19 @@ export default function App() {
   });
 
   return (
-      <Canvas camera={{ fov: 45 }}>
-        <points ref={pointsRef}>
-          <torusGeometry args={[2, 0.8, 16, 100]} />
-          <pointsMaterial size={0.05} color="blue" />
-        </points>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-      </Canvas>
+    <points ref={pointsRef}>
+      <torusGeometry args={[2, 0.8, 16, 100]} />
+      <pointsMaterial size={0.05} color="blue" />
+    </points>
+  );
+}
+
+export default function App() {
+  return (
+    <Canvas camera={{ fov: 45 }}>
+      <MovingParticles />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
+    </Canvas>
   );
 }

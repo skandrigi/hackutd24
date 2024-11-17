@@ -4,29 +4,18 @@ import { Line } from "@react-three/drei";
 
 const degToRad = (degrees) => (degrees * Math.PI) / 180;
 
-function Arc({
-  arc_length = Math.PI / 6,
-  radius = 1.5,
-  segments = 100,
-  angle = 0,
-  currentAngle,
-  opacity,
-}) {
-  const points = useMemo(() => {
-    const positions = [];
-    for (let i = 0; i <= segments; i++) {
-      const t = i / segments;
-      const theta =
-        t * arc_length - arc_length / 2 + degToRad(currentAngle);
-      const x = radius * Math.cos(theta);
-      const y = radius * Math.sin(theta);
-      positions.push([x, y, 0]); // z = 0 for the arc
-    }
-    return positions;
-  }, [arc_length, radius, segments, currentAngle]);
+function SmallCircle({ radius = 1.5, currentAngle }) {
+  const position = useMemo(() => {
+    const x = radius * Math.cos(degToRad(currentAngle));
+    const y = radius * Math.sin(degToRad(currentAngle));
+    return [x, y, 0.01]; // Slightly in front of the circle
+  }, [radius, currentAngle]);
 
   return (
-    <Line points={points} color="blue" lineWidth={2} opacity={opacity} />
+    <mesh position={position}>
+      <circleGeometry args={[0.1, 32]} />
+      <meshBasicMaterial color="blue" />
+    </mesh>
   );
 }
 
@@ -86,15 +75,8 @@ export default function App() {
       >
         {/* Render the full circle first */}
         <Circle radius={1.5} segments={100} />
-        {/* Render the arc on top of the circle */}
-        <Arc
-          arc_length={Math.PI / 6}
-          radius={1.5}
-          segments={100}
-          angle={180}
-          currentAngle={currentAngle}
-          opacity={opacity}
-        />
+        {/* Render the small circle on the larger circle */}
+        <SmallCircle radius={1.5} currentAngle={currentAngle} />
         <ambientLight intensity={0.5} />
         <pointLight position={[10, 10, 10]} />
       </Canvas>

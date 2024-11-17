@@ -30,6 +30,7 @@ const App = () => {
       setTranscriptionText((prevTranscription) => {
         return prevTranscription + "\n" + (data.transcript || "");
       });
+      setMessages((prevMessages) => [...prevMessages, data]);
     };
 
     ws.onclose = (event) => {
@@ -101,7 +102,7 @@ const App = () => {
       {/* Render the Audio Visualizer when transcription starts */}
       {transcriptionOn && (
         <div className="mt-6">
-          <AudioVisualizer />
+          <AudioVisualizer currentAngle={currentAngle} setCurrentAngle={setCurrentAngle}/>
         </div>
       )}
 

@@ -11,7 +11,8 @@ import io
 
 
 # Initialize Whisper model
-client = openai.OpenAI()
+from openai import OpenAI
+client = OpenAI()
 
 # Queue to hold loudness values
 audio_data = []
@@ -47,14 +48,17 @@ async def transcribe_audio():
             audio_chunk = np.concatenate(audio_data, axis=0)
             audio_data.clear()
 
-            # Convert to bytes for Whisper
-            audio_bytes = io.BytesIO()
-            np.save(audio_bytes, audio_chunk)
-            audio_bytes.seek(0)
+            # Save audio chunk to a temporary file
+            temp_audio_file = "/tmp/audio_chunk.npy"
+            np.save(temp_audio_file, audio_chunk)
 
-            # Transcribe using Whisper
-            transcription = model.transcribe(audio_bytes)
-            print(f"Transcription: {transcription['text']}")
+            # Open the file and transcribe using Whisper
+            with open(temp_audio_file, "rb") as audio_file:
+                transcription = client.audio.transcriptions.create(
+                    model="whisper-1",
+                    file=audio_file
+                )
+                print(f"Transcription: {transcription.text}")
 async def websocket_client():
     try:
         async with websockets.connect(SERVER_URI) as websocket:

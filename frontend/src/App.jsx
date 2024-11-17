@@ -17,7 +17,8 @@ function Arc({
         const positions = [];
         for (let i = 0; i <= segments; i++) {
             const t = i / segments;
-            const theta = t * arc_length - arc_length / 2 + degToRad(currentAngle);
+            const theta =
+                t * arc_length - arc_length / 2 + degToRad(currentAngle);
             const x = radius * Math.cos(theta);
             const y = radius * Math.sin(theta);
             positions.push([x, y, 0]);
@@ -25,7 +26,9 @@ function Arc({
         return positions;
     }, [arc_length, radius, segments, currentAngle]);
 
-    return <Line points={points} color="blue" lineWidth={2} opacity={opacity} />;
+    return (
+        <Line points={points} color="blue" lineWidth={2} opacity={opacity} />
+    );
 }
 
 export default function App() {
@@ -43,24 +46,28 @@ export default function App() {
             });
         }, 100);
     };
+    return (
         <>
-        <button onClick={handleRandomAngle} style={{ position: 'absolute', zIndex: 1 }}>
-            Random Angle
-        </button>
-        <Canvas
-            camera={{ fov: 45 }}
-            style={{ width: "100vw", height: "100vh" }}
-        >
-            <Arc
-                arc_length={Math.PI / 6}
-                radius={1.5}
-                segments={100}
-                angle={180}
-                handleRandomAngle={handleRandomAngle}
-            />
-            <ambientLight intensity={0.5} />
-            <pointLight position={[10, 10, 10]} />
-        </Canvas>
+            <button
+                onClick={handleRandomAngle}
+                style={{ position: "absolute", zIndex: 1 }}
+            >
+                Random Angle
+            </button>
+            <Canvas
+                camera={{ fov: 45 }}
+                style={{ width: "100vw", height: "100vh" }}
+            >
+                <Arc
+                    arc_length={Math.PI / 6}
+                    radius={1.5}
+                    segments={100}
+                    angle={180}
+                    handleRandomAngle={handleRandomAngle}
+                />
+                <ambientLight intensity={0.5} />
+                <pointLight position={[10, 10, 10]} />
+            </Canvas>
         </>
     );
 }

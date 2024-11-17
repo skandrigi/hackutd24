@@ -1,6 +1,6 @@
 import { Canvas } from "@react-three/fiber";
 import { useSpring, animated } from "@react-spring/three";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Line } from "@react-three/drei";
 
 const degToRad = (degrees) => (degrees * Math.PI) / 180;
@@ -50,6 +50,36 @@ export default function App() {
   const [currentAngle, setCurrentAngle] = useState(0);
   const [opacity, setOpacity] = useState(1);
 
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    // Initialize WebSocket connection
+    const ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    ws.onmessage = (event) => {
+      setMessages((prev) => [...prev, event.data]);
+    };
+
+    ws.onclose = (event) => {
+      console.log("WebSocket connection closed:", event.reason);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    setSocket(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, []);
   const handleRandomAngle = () => {
     const randomAngle = Math.floor(Math.random() * 360);
     setCurrentAngle(randomAngle);

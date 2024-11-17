@@ -19,7 +19,7 @@ function SmallCircle({ radius = 1.5, currentAngle }) {
     <animated.mesh position={position}>
       <circleGeometry args={[0.1, 32]} />
       <meshBasicMaterial color="blue" />
-    </mesh>
+    </animated.mesh>
   );
 }
 

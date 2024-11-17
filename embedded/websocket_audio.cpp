@@ -4,35 +4,42 @@
 using namespace websockets;
 
 // Wi-Fi Info
-const char* ssid = ""; // Manually set when we run
-const char* password = ""; // Manually set when we run
+const char *ssid = "";     // Manually set when we run
+const char *password = ""; // Manually set when we run
 
 // WebSocket server URL
-const char* websocket_server = ""; // Manually set when we run
+const char *websocket_server = ""; // Manually set when we run
 
 WebsocketsClient webSocket;
 
-const int micPin = 36; // ADC pin for the solo mic
+const int micPin = 36;         // ADC pin for the solo mic
 const int samplingRate = 8000; // Target sampling rate (8kHz), might need to adjust
 
-void connectToWiFi() {
+void connectToWiFi()
+{
     WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
+    while (WiFi.status() != WL_CONNECTED)
+    {
         delay(1000);
         Serial.println("Connecting to Wi-Fi...");
     }
     Serial.println("Connected to Wi-Fi");
 }
 
-void connectToWebSocket() {
-    if (webSocket.connect(websocket_server)) {
+void connectToWebSocket()
+{
+    if (webSocket.connect(websocket_server))
+    {
         Serial.println("Connected to WebSocket server");
-    } else {
+    }
+    else
+    {
         Serial.println("WebSocket connection failed");
     }
 }
 
-void setup() {
+void audioSetup()
+{
     Serial.begin(115200);
 
     // Connect to Wi-Fi
@@ -42,12 +49,14 @@ void setup() {
     connectToWebSocket();
 }
 
-void loop() {
+void audioLoop()
+{
     static unsigned long lastSampleTime = 0;
     unsigned long currentTime = micros();
 
     // Maintain a consistent sampling rate
-    if (currentTime - lastSampleTime >= (1000000 / samplingRate)) {
+    if (currentTime - lastSampleTime >= (1000000 / samplingRate))
+    {
         lastSampleTime = currentTime;
 
         // Read ADC value from microphone

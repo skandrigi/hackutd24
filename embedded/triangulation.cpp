@@ -98,7 +98,8 @@ if (micA_trigger && micB_trigger && micC_trigger) {
     
     Serial.println("Angle: " + String(ori.angle) + ", Distance: " + String(ori.distance));
 
-    sendTriangulationData(ori.angle, ori.distance);
+    String message = "{\"type\": \"triangulation\", \"angle\": " + String(angle) + ", \"distance\": " + String(distance) + "}";
+    webSocket.sendTXT(message);
 
     micA_trigger = false;
     micB_trigger = false;

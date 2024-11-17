@@ -1,31 +1,26 @@
+#include <WiFi.h>
 #include <WebSocketsClient.h>
+#include "WebSocketsClient.h"
+
+// Declare function prototypes for audio and triangulation functions
+void audioStreamingSetup();
+void audioStreamingLoop();
+void triangulationSetup();
+void triangulationLoop();
+void webSocketEvent(WStype_t type, uint8_t* payload, size_t length);
 
 WebSocketsClient webSocket;
 
-// from `audio_streaming.cpp`
-void audioStreamingSetup();
-void audioStreamingLoop();
-
-// from `triangulation.cpp`
-void triangulationSetup();
-void triangulationLoop();
-void sendTriangulationData(double angle, double distance);
-
-void webSocketEvent(WStype_t type, uint8_t* payload, size_t length);
-
-void sendTranscriptionData(String transcription);
-
 void setup() {
     Serial.begin(9600);
-
-    audioStreamingSetup();
-    triangulationSetup();
+    audioSetup(); 
+    triangulationSetup(); 
 }
 
 void loop() {
-    webSocket.loop();
-    audioStreamingLoop();
-    triangulationLoop();
+    webSocket.loop(); 
+    audioLoop(); 
+    triangulationLoop(); 
 }
 
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
@@ -44,14 +39,4 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         default:
             break;
     }
-}
-
-void sendTriangulationData(double angle, double distance) {
-    String message = "{\"type\": \"triangulation\", \"angle\": " + String(angle) + ", \"distance\": " + String(distance) + "}";
-    webSocket.sendTXT(message);
-}
-
-void sendTranscriptionData(String transcription) {
-    String message = "{\"type\": \"transcription\", \"text\": \"" + transcription + "\"}";
-    webSocket.sendTXT(message);
 }

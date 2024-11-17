@@ -11,7 +11,7 @@ function Arc({
     angle = 0,
 }) {
     const [currentAngle, setCurrentAngle] = useState(0);
-    const [opacity, setOpacity] = useState(0);
+    const [opacity, setOpacity] = useState(1);
 
     const points = useMemo(() => {
         const positions = [];

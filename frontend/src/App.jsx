@@ -4,11 +4,11 @@ export default function App() {
 return (
     <Canvas>
       <mesh>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshPhongMaterial />
+        <torusGeometry args={[1, 0.4, 16, 100]} />
+        <meshStandardMaterial emissive="yellow" emissiveIntensity={0.5} />
       </mesh>
-      <ambientLight intensity={0.1} />
-      <directionalLight position={[0, 0, 5]} color="red" />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[10, 10, 10]} />
     </Canvas>
 );
 }

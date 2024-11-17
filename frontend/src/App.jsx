@@ -64,7 +64,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center justify-center px-4">
+    <div className="min-h-screen bg-[#f4efea] text-gray-900 flex flex-col items-center justify-center px-4">
       <img src={logo} alt="Tritone" className="w-72 h-auto mb-4" />
       {!transcriptionOn && (
         <img src={mainasset} alt="asset" className="w-96 h-auto mb-6" />
@@ -93,7 +93,7 @@ const App = () => {
           className={`px-6 py-2 rounded-md font-semibold text-white ${
             transcriptionOn
               ? "bg-[#ff3c8a] hover:bg-[#d9296f]"
-              : "bg-[#70af70] hover:bg-green-600"
+              : "bg-[#70af70] hover:bg-[#5c9e5c]"
           }`}
         >
           {transcriptionOn ? "Stop Transcription" : "Start Transcription"}

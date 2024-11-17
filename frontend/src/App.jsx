@@ -8,8 +8,10 @@ function MovingParticles() {
     if (pointsRef.current) {
       pointsRef.current.rotation.x += 0.01;
       pointsRef.current.rotation.y += 0.01;
-      pointsRef.current.position.x = Math.sin(Date.now() * 0.001) * 0.5;
-      pointsRef.current.position.y = Math.cos(Date.now() * 0.001) * 0.5;
+
+      // Randomly move particles in 2D space
+      pointsRef.current.position.x += (Math.random() - 0.5) * 0.01;
+      pointsRef.current.position.y += (Math.random() - 0.5) * 0.01;
     }
   });
 

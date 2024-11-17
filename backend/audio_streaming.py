@@ -7,7 +7,7 @@ import sounddevice as sd
 import numpy as np
 from queue import Queue
 import openai
-import io
+import wave
 
 
 # Initialize Whisper model
@@ -47,8 +47,12 @@ async def transcribe_audio():
             audio_chunk = np.concatenate(audio_data, axis=0)
             audio_data.clear()
 
-            temp_audio_file = "/tmp/audio_chunk.npy"
-            np.save(temp_audio_file, audio_chunk)
+            temp_audio_file = "/tmp/audio_chunk.wav"
+            with wave.open(temp_audio_file, 'wb') as wf:
+                wf.setnchannels(1)  # Mono audio
+                wf.setsampwidth(2)  # Assuming 16-bit audio
+                wf.setframerate(44100)  # Sample rate
+                wf.writeframes(audio_chunk.tobytes())
 
             with open(temp_audio_file, "rb") as audio_file:
                 transcription = client.audio.transcriptions.create(

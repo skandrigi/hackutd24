@@ -62,11 +62,11 @@ void audioLoop()
         // Read ADC value from microphone
         int micValue = analogRead(micPin);
 
-        // Send a message to WebSocket server
-        webSocket.send("Hello WebSocket!");
+        // Convert micValue to a byte
+        byte audioByte = micValue >> 2; 
 
-        // Send ADC value as raw audio data to WebSocket server
-        webSocket.send(String(micValue));
+        // Send the binary audio data to WebSocket server
+        webSocket.sendBIN(&audioByte, sizeof(audioByte));
 
         // Print value for debugging
         Serial.println(micValue);

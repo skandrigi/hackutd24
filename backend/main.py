@@ -34,7 +34,7 @@ async def websocket_endpoint(websocket: WebSocket):
         while True:
             data = await websocket.receive()
 
-            if data["type"] == "text": # angle and distance
+            if data["type"] == "text":  # angle and distance
                 message = data["text"]
                 try:
                     json_data = json.loads(message)
@@ -42,15 +42,13 @@ async def websocket_endpoint(websocket: WebSocket):
                         angle = json_data["angle"]
                         distance = json_data["distance"]
                         print(f"Received triangulation data: Angle={angle}, Distance={distance}")
-                    elif json_data.get("type") == "transcription":
-                        transcription = json_data["text"]
-                        print(f"Received transcription: {transcription}")
                 except json.JSONDecodeError:
                     print("Invalid JSON message received.")
                 
-            elif data["type"] == "binary": # audio
+            elif data["type"] == "binary":  # audio data (raw binary)
                 audio_data = data["bytes"]
                 print(f"Received binary audio data of size {len(audio_data)}")
+                await websocket.send_bytes(audio_data)  # Send the received binary data back to the client
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)

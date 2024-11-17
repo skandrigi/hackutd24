@@ -52,7 +52,7 @@ async def transcribe_audio():
 
             with open(temp_audio_file, "rb") as audio_file:
                 transcription = client.audio.transcriptions.create(
-                    model="whisper-1",
+                    model="whisper-turbo",
                     file=audio_file
                 )
                 print(f"Transcription: {transcription.text}")

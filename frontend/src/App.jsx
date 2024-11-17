@@ -1,126 +1,77 @@
-import { Canvas } from "@react-three/fiber";
-import { useSpring, animated } from "@react-spring/three";
-import { useMemo, useState, useEffect } from "react";
-import { Line } from "@react-three/drei";
+import { useState } from "react";
+import AudioVisualizer from "./components/AudioVisualizer";
 
-const degToRad = (degrees) => (degrees * Math.PI) / 180;
+const App = () => {
+  const [mode, setMode] = useState("nearby");
+  const [transcriptionOn, setTranscriptionOn] = useState(false);
+  const [transcriptionText, setTranscriptionText] = useState("");
 
-function SmallCircle({ radius = 1.5, currentAngle }) {
-  const { position } = useSpring({
-    position: [
-      radius * Math.cos(degToRad(currentAngle)),
-      radius * Math.sin(degToRad(currentAngle)),
-      0.01,
-    ],
-    config: { tension: 170, friction: 26 },
-  });
+  const handleModeChange = (e) => {
+    setMode(e.target.value);
+  };
 
-  return (
-    <animated.mesh position={position}>
-      <circleGeometry args={[0.1, 32]} />
-      <meshBasicMaterial color="blue" />
-    </animated.mesh>
-  );
-}
-
-function Circle({ radius = 1.5, segments = 100 }) {
-  const points = useMemo(() => {
-    const positions = [];
-    for (let i = 0; i <= segments; i++) {
-      const theta = (i / segments) * 2 * Math.PI;
-      const x = radius * Math.cos(theta);
-      const y = radius * Math.sin(theta);
-      positions.push([x, y, -0.01]); // Slightly behind the arc
+  const toggleTranscription = () => {
+    setTranscriptionOn((prev) => !prev);
+    if (!transcriptionOn) {
+      // Simulate transcription (replace with backend integration)
+      setTranscriptionText("Transcription will appear here...");
+    } else {
+      setTranscriptionText("");
     }
-    return positions;
-  }, [radius, segments]);
-
-  return (
-    <Line
-      points={points}
-      color="gray"
-      lineWidth={1}
-      opacity={0.5}
-      transparent
-    />
-  );
-}
-
-export default function App() {
-  const [currentAngle, setCurrentAngle] = useState(0);
-  const [opacity, setOpacity] = useState(1);
-
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState("");
-  const [socket, setSocket] = useState(null);
-
-  useEffect(() => {
-    // Initialize WebSocket connection
-    const ws = new WebSocket("ws://localhost:8000/ws");
-
-    ws.onopen = () => {
-      console.log("WebSocket connection established");
-    };
-
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      const angle = data.angle !== undefined ? data.angle : 0;
-      setCurrentAngle(angle);
-      setMessages((prev) => [...prev, event.data]);
-    };
-
-    ws.onclose = (event) => {
-      console.log("WebSocket connection closed:", event.reason);
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    setSocket(ws);
-
-    return () => {
-      ws.close();
-    };
-  }, []);
-  const handleRandomAngle = () => {
-    const randomAngle = Math.floor(Math.random() * 360);
-    setCurrentAngle(randomAngle);
-    setOpacity(0);
-    const fadeIn = setInterval(() => {
-      setOpacity((prev) => {
-        if (prev >= 1) {
-          clearInterval(fadeIn);
-          return 1;
-        }
-        return prev + 0.1;
-      });
-    }, 100);
   };
 
   return (
-    <>
-      <button
-        onClick={handleRandomAngle}
-        style={{ position: "absolute", zIndex: 1 }}
-      >
-        Random Angle
-      </button>
-      <Canvas
-        camera={{ fov: 45 }}
-        style={{ width: "100vw", height: "100vh" }}
-      >
-        {/* Render the full circle first */}
-        <Circle radius={1.5} segments={100} />
-        {/* Render the small circle on the larger circle */}
-        <SmallCircle radius={1.5} currentAngle={currentAngle} />
-        <mesh position={[0, 0, 0.02]}>
-          <boxGeometry args={[0.2, 0.2, 0.2]} />
-          <meshBasicMaterial color="red" />
-        </mesh>
-        <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} />
-      </Canvas>
-    </>
+    <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center justify-center px-4">
+      <h1 className="text-3xl font-bold mb-4">Hearing Assist App</h1>
+
+      {/* Mode Selection */}
+      <div className="flex flex-col items-center space-y-4">
+        <div>
+          <label htmlFor="mode" className="block text-lg font-medium mb-1">
+            Select Mode
+          </label>
+          <select
+            id="mode"
+            value={mode}
+            onChange={handleModeChange}
+            className="block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+          >
+            <option value="nearby">Nearby</option>
+            <option value="long-distance">Long Distance</option>
+          </select>
+        </div>
+
+        {/* Transcription Toggle Button */}
+        <button
+          onClick={toggleTranscription}
+          className={`px-6 py-2 rounded-md font-semibold text-white ${
+            transcriptionOn
+              ? "bg-red-500 hover:bg-red-600"
+              : "bg-green-500 hover:bg-green-600"
+          }`}
+        >
+          {transcriptionOn ? "Stop Transcription" : "Start Transcription"}
+        </button>
+      </div>
+
+      {/* Render the Audio Visualizer when transcription starts */}
+      {transcriptionOn && (
+        <div className="mt-6">
+          <AudioVisualizer />
+        </div>
+      )}
+
+      {/* Transcription Box */}
+      {transcriptionOn && (
+        <div className="w-full max-w-3xl p-4 bg-white border rounded-lg shadow mt-6">
+          <p className="text-sm text-gray-500">Transcription:</p>
+          <div className="mt-2 p-2 h-40 overflow-y-auto border rounded bg-gray-100">
+            {transcriptionText || "No transcription yet..."}
+          </div>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default App;

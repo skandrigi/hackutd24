@@ -6,7 +6,7 @@ function MovingParticles({ angle = .4 }) {
   const pointsRef = useRef();
 
   const numParticles = 500; // Increase number of particles for a thicker arc
-  const radius = 5; // Radius of the arc
+  const radius = 2; // Radius of the arc
 
   const positions = [];
   for (let i = 0; i < numParticles; i++) {

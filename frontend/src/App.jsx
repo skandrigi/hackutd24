@@ -18,14 +18,14 @@ function MovingParticles({ angle = .4 }) {
     positions.push(x, y, 0); // z = 0 for 2D
   }
 
-  useFrame(() => {
-    if (pointsRef.current) {
-      pointsRef.current.rotation.z += 0.01; 
+  // useFrame(() => {
+  //   if (pointsRef.current) {
+  //     pointsRef.current.rotation.z += 0.01; 
 
-      pointsRef.current.position.x += (Math.random() - 0.5) * 0.01;
-      pointsRef.current.position.y += (Math.random() - 0.5) * 0.01;
-    }
-  });
+  //     pointsRef.current.position.x += (Math.random() - 0.5) * 0.01;
+  //     pointsRef.current.position.y += (Math.random() - 0.5) * 0.01;
+  //   }
+  // });
 
   return (
     <points ref={pointsRef}>

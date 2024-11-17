@@ -2,9 +2,9 @@ import { Canvas } from "@react-three/fiber";
 
 export default function App() {
 return (
-    <Canvas>
+    <Canvas camera={{ fov: 45 }}>
       <points>
-        <torusGeometry args={[1, 0.4, 16, 100]} />
+        <torusGeometry args={[2, 0.8, 16, 100]} />
         <pointsMaterial size={0.05} color="yellow" />
       </points>
       <ambientLight intensity={0.5} />

@@ -41,12 +41,16 @@ async def websocket_client():
 
                 try:
                     while True:
-                        # Receive server commands
-                        command = await websocket.recv()
-                        if command == "RECORD":
-                            print("RECORD command received")
-                        elif command == "WAIT":
-                            print("WAIT command received")
+                        # Receive server commands or audio data
+                        data = await websocket.recv()
+                        if isinstance(data, str):
+                            if data == "RECORD":
+                                print("RECORD command received")
+                            elif data == "WAIT":
+                                print("WAIT command received")
+                        elif isinstance(data, bytes):
+                            print(f"Received audio data of size {len(data)}")
+                            # Process the audio data as needed
                 except websockets.exceptions.ConnectionClosed:
                     print("WebSocket connection closed by the server")
                 finally:

@@ -1,4 +1,6 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+import json
+import asyncio
 
 app = FastAPI()
 
@@ -30,11 +32,13 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            data = await websocket.receive_text()
-            # Echo the received message back to the client
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            # Broadcast the message to all connected clients
-            await manager.broadcast(f"Client says: {data}")
+            location_data = {
+                    "degree": 25,
+            }
+            location_json = json.dumps(location_data)
+
+            await manager.broadcast(location_json)
+            await asyncio.sleep(.1)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
         await manager.broadcast("A client disconnected")

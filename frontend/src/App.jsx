@@ -44,6 +44,7 @@ function Arc({
 
 export default function App() {
     return (
+        <>
         <button onClick={handleRandomAngle} style={{ position: 'absolute', zIndex: 1 }}>
             Random Angle
         </button>
@@ -60,5 +61,6 @@ export default function App() {
             <ambientLight intensity={0.5} />
             <pointLight position={[10, 10, 10]} />
         </Canvas>
+        </>
     );
 }

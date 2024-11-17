@@ -39,15 +39,15 @@ const App = () => {
 
       {/* Mode Selection */}
       <div className="flex flex-col items-center space-y-4">
-        <div>
-          <label htmlFor="mode" className="block text-lg font-medium mb-1 text-center">
+        <div className="flex flex-col items-center space-y-2">
+          <label htmlFor="mode" className="text-lg font-medium">
             Select Mode
           </label>
           <select
             id="mode"
             value={mode}
             onChange={handleModeChange}
-            className="block w-full max-w-xs rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200"
+            className="block w-48 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring focus:ring-indigo-200 text-center"
           >
             <option value="nearby">Nearby</option>
             <option value="long-distance">Long-Distance</option>

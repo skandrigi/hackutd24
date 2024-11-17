@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import AudioVisualizer from "./components/AudioVisualizer";
 import logo from "./assets/logo.png";
 import mainasset from "./assets/mainasset.gif";
@@ -7,6 +7,46 @@ const App = () => {
   const [mode, setMode] = useState("nearby");
   const [transcriptionOn, setTranscriptionOn] = useState(false);
   const [transcriptionText, setTranscriptionText] = useState("");
+  const [currentAngle, setCurrentAngle] = useState(0);
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [socket, setSocket] = useState(null);
+
+  useEffect(() => {
+    const ws = new WebSocket("ws://localhost:8000/ws");
+
+    ws.onopen = () => {
+      console.log("WebSocket connection established");
+    };
+
+    ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      console.log("Data: ", data);
+      const newAngle = data.angle !== undefined ? data.angle : null;
+
+      setCurrentAngle((prevAngle) =>
+        newAngle !== null ? newAngle : prevAngle,
+      );
+      setTranscriptionText((prevTranscription) => {
+        return prevTranscription + "\n" + (data.transcript || "");
+      });
+      setMessages((prevMessages) => [...prevMessages, data]);
+    };
+
+    ws.onclose = (event) => {
+      console.log("WebSocket connection closed:", event.reason);
+    };
+
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
+    setSocket(ws);
+
+    return () => {
+      ws.close();
+    };
+  }, []);
 
   const handleModeChange = (e) => {
     setMode(e.target.value);
@@ -24,18 +64,10 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center justify-center px-4">
-      <img
-      src={logo}
-      alt="Tritone"
-      className="w-72 h-auto mb-4" 
-    />
-    {!transcriptionOn &&
-      <img
-      src={mainasset} 
-      alt="asset"
-      className="w-96 h-auto mb-6" 
-  />
-    }
+      <img src={logo} alt="Tritone" className="w-72 h-auto mb-4" />
+      {!transcriptionOn && (
+        <img src={mainasset} alt="asset" className="w-96 h-auto mb-6" />
+      )}
 
       {/* Mode Selection */}
       <div className="flex flex-col items-center space-y-4">
@@ -70,7 +102,7 @@ const App = () => {
       {/* Render the Audio Visualizer when transcription starts */}
       {transcriptionOn && (
         <div className="mt-6">
-          <AudioVisualizer />
+          <AudioVisualizer currentAngle={currentAngle} setCurrentAngle={setCurrentAngle}/>
         </div>
       )}
 

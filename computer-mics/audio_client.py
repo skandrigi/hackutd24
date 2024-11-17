@@ -1,4 +1,8 @@
 import asyncio
+
+# Configuration variables
+CLIENT_ID = "your_client_id"  # Replace with actual client ID
+SERVER_URI = "ws://localhost:8000/ws"  # Replace with actual server URI
 import websockets
 import sounddevice as sd
 import numpy as np

@@ -4,9 +4,6 @@ import sounddevice as sd
 import numpy as np
 from queue import Queue
 
-# Configuration
-CLIENT_ID = "Laptop1"  # Unique identifier for this client
-SERVER_URI = "ws://localhost:12345"  # WebSocket server address
 
 # Queue to hold loudness values
 message_queue = Queue()

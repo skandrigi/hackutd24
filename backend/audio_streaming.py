@@ -53,7 +53,8 @@ async def transcribe_audio():
             with open(temp_audio_file, "rb") as audio_file:
                 transcription = client.audio.transcriptions.create(
                     model="whisper-turbo",
-                    file=audio_file
+                    file=audio_file,
+                    response_format="text"
                 )
                 print(f"Transcription: {transcription.text}")
 async def websocket_client():

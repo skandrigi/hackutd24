@@ -10,12 +10,12 @@ function Arc({
     segments = 100,
     angle = 0,
 }) {
-    const [angle, setAngle] = useState(0);
+    const [currentAngle, setCurrentAngle] = useState(0);
     const [opacity, setOpacity] = useState(0);
 
     const handleRandomAngle = () => {
         const randomAngle = Math.floor(Math.random() * 360);
-        setAngle(randomAngle);
+        setCurrentAngle(randomAngle);
         setOpacity(0);
         const fadeIn = setInterval(() => {
             setOpacity((prev) => {
@@ -30,7 +30,7 @@ function Arc({
         const positions = [];
         for (let i = 0; i <= segments; i++) {
             const t = i / segments;
-            const theta = t * arc_length - arc_length / 2 + degToRad(angle);
+            const theta = t * arc_length - arc_length / 2 + degToRad(currentAngle);
             const x = radius * Math.cos(theta);
             const y = radius * Math.sin(theta);
             positions.push([x, y, 0]);

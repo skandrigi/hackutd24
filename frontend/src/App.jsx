@@ -65,8 +65,8 @@ const App = () => {
 
     // Handle window resize to adjust canvas size dynamically
     const handleResize = () => {
-      const newStageWidth = window.innerWidth * 0.8;
-      const newStageHeight = window.innerHeight * 0.8;
+      const newStageWidth = window.innerWidth;
+      const newStageHeight = window.innerHeight;
       app.renderer.resize(newStageWidth, newStageHeight);
       drawCircle(degree); // Re-draw circle after resizing
     };

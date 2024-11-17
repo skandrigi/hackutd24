@@ -22,12 +22,11 @@ const App = () => {
 
     app.stage.removeChildren(); // Clear previous drawings
 
-    const graphics = new PIXI.Graphics();
-
     const centerX = app.screen.width / 2;
     const centerY = app.screen.height / 2;
 
     // Draw white circle outline with thicker stroke
+    const graphics = new PIXI.Graphics();
     graphics.lineStyle(8, 0xFFFFFF); // White border with thickness of 8
     graphics.arc(centerX, centerY, 150, 0, Math.PI * 2); // Full circle outline with radius of 150
     app.stage.addChild(graphics);
@@ -45,10 +44,14 @@ const App = () => {
   };
 
   useEffect(() => {
+    // Set stage size relative to screen size (80% of window width and height)
+    const stageWidth = window.innerWidth * 0.8;
+    const stageHeight = window.innerHeight * 0.8;
+
     // Initialize PixiJS Application once on mount with dynamic screen size
     const app = new PIXI.Application({ 
-      width: window.innerWidth,
-      height: window.innerHeight,
+      width: stageWidth,
+      height: stageHeight,
       resolution: window.devicePixelRatio || 2, // Higher resolution for smoother rendering
       antialias: true,                          // Enable antialiasing for smoother edges
       backgroundColor: 0x000000                 // Optional background color (black)
@@ -62,7 +65,9 @@ const App = () => {
 
     // Handle window resize to adjust canvas size dynamically
     const handleResize = () => {
-      app.renderer.resize(window.innerWidth, window.innerHeight);
+      const newStageWidth = window.innerWidth * 0.8;
+      const newStageHeight = window.innerHeight * 0.8;
+      app.renderer.resize(newStageWidth, newStageHeight);
       drawCircle(degree); // Re-draw circle after resizing
     };
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Test from "./components/Test";
 
 const App = () => {
   const [messages, setMessages] = useState([]);
@@ -43,6 +44,7 @@ const App = () => {
 
   return (
     <div style={{ padding: "20px", fontFamily: "Arial" }}>
+      <Test />
       <h1>WebSocket Client</h1>
       <div style={{ marginBottom: "20px" }}>
         <h2>Messages</h2>

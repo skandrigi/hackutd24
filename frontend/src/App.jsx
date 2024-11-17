@@ -22,7 +22,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 flex flex-col items-center justify-center px-4">
-      <h1 className="text-3xl font-bold mb-4">Hearing Assist App</h1>
+      <h1 className="text-3xl font-bold mb-4">HearR</h1>
 
       {/* Mode Selection */}
       <div className="flex flex-col items-center space-y-4">

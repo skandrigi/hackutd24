@@ -56,35 +56,33 @@ async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
     try:
         while True:
-            # data = await websocket.receive()
+            while True:
+                data = await websocket.receive()
 
-            # if data["type"] == "text":  # angle and distance
-            #     message = data["text"]
-            #     try:
-            #         json_data = json.loads(message)
-            #         if json_data.get("type") == "triangulation":
-            #             angle = json_data["angle"]
-            #             distance = json_data["distance"]
-            #             print(
-            #                 f"Received triangulation data: Angle={angle}, Distance={distance}"
-            #             )
-            #     except json.JSONDecodeError:
-            #         print("Invalid JSON message received.")
+                if isinstance(data, str):  # angle and distance
+                    try:
+                        json_data = json.loads(data)
+                        if json_data.get("type") == "triangulation":
+                            angle = json_data["angle"]
+                            distance = json_data["distance"]
+                            print(
+                                f"Received triangulation data: Angle={angle}, Distance={distance}"
+                            )
+                    except json.JSONDecodeError:
+                        print("Invalid JSON message received.")
 
-            # elif data["type"] == "binary":  # audio data (raw binary)
-            #     audio_data = data["bytes"]
-            #     print(f"Received binary audio data of size {len(audio_data)}")
-            #     await websocket.send_bytes(
-            #         audio_data
-            #     )  # Send the received binary data back to the client
+                elif isinstance(data, bytes):  # audio data (raw binary)
+                    audio_data = data
+                    print(f"Received binary audio data of size {len(audio_data)}")
+                    await websocket.send_bytes(
+                        audio_data
+                    )  # Send the received binary data back to the client
 
-            num_chunks = 5
-            chunk_size = 10
-
-            angle = random.randint(0, 360)  # Generate a random angle for the chunk
-            await websocket.send_json({"angle": angle})
-            timeout = random.randint(1, 5)  # Generate a random timeout for the chunk
-            await asyncio.sleep(timeout)
+                # Send random location data
+                angle = random.randint(0, 360)  # Generate a random angle for the chunk
+                await websocket.send_json({"angle": angle})
+                timeout = random.randint(1, 5)  # Generate a random timeout for the chunk
+                await asyncio.sleep(timeout)
 
     except WebSocketDisconnect:
         manager.disconnect(websocket)

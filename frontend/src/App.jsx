@@ -63,6 +63,9 @@ export default function App() {
     };
 
     ws.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      const angle = data.angle !== undefined ? data.angle : 0;
+      setCurrentAngle(angle);
       setMessages((prev) => [...prev, event.data]);
     };
 

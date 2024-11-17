@@ -1,51 +1,27 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { useRef } from "react";
-import * as THREE from "three";
+import { Canvas } from "@react-three/fiber";
+import { useMemo } from "react";
+import { Line } from "@react-three/drei";
 
-function MovingParticles({ angle = .4 }) {
-  const pointsRef = useRef();
+function Arc({ angle = Math.PI / 6, radius = 1.5, segments = 100 }) {
+  const points = useMemo(() => {
+    const positions = [];
+    for (let i = 0; i <= segments; i++) {
+      const t = i / segments;
+      const theta = t * angle - angle / 2;
+      const x = radius * Math.cos(theta);
+      const y = radius * Math.sin(theta);
+      positions.push([x, y, 0]);
+    }
+    return positions;
+  }, [angle, radius, segments]);
 
-  const numParticles = 300; 
-  const radius = 1.5; // Radius of the arc
-
-  const positions = [];
-  for (let i = 0; i < numParticles; i++) {
-    const t = (Math.random() + Math.random() + Math.random()) / 3; // Central limit theorem
-    const theta = (t * angle) - (angle / 2); // Center the arc around 0
-    const r = radius + (Math.random() - 0.5) * 0.5; // Add randomness to radius
-    const x = r * Math.cos(theta);
-    const y = r * Math.sin(theta) * Math.pow(Math.cos(theta), 2); // Emphasize quadratic curve
-    positions.push(x, y, 0); // z = 0 for 2D
-  }
-
-  // useFrame(() => {
-  //   if (pointsRef.current) {
-  //     pointsRef.current.rotation.z += 0.01; 
-
-  //     pointsRef.current.position.x += (Math.random() - 0.5) * 0.01;
-  //     pointsRef.current.position.y += (Math.random() - 0.5) * 0.01;
-  //   }
-  // });
-
-  return (
-    <points ref={pointsRef}>
-      <bufferGeometry attach="geometry">
-        <bufferAttribute
-          attach="attributes-position"
-          count={numParticles}
-          array={new Float32Array(positions)}
-          itemSize={3}
-        />
-      </bufferGeometry>
-      <pointsMaterial attach="material" size={0.05} color="blue" />
-    </points>
-  );
+  return <Line points={points} color="blue" lineWidth={2} />;
 }
 
-export default function App() {
+export default function App() { 
   return (
     <Canvas camera={{ fov: 45 }} style={{ width: '100vw', height: '100vh' }}>
-      <MovingParticles angle={Math.PI / 6} /> 
+      <Arc angle={Math.PI / 6} radius={1.5} segments={100} />
       <ambientLight intensity={0.5} />
       <pointLight position={[10, 10, 10]} />
     </Canvas>

@@ -1,0 +1,5 @@
+.vscode/
+.pio/
+*.bin
+*.hex
+*.cpp.*
